@@ -120,7 +120,7 @@ class RejectedArea(db.Model):
 
     def __init__(self, email_id, description):
         self.email_id = email_id
-        self.description = description
+        self.description = description[:499]
 
     def to_dict(self):
         d = self.__dict__

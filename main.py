@@ -4,6 +4,7 @@ import pandas as pd
 from geoalchemy2 import WKTElement
 
 from area_mapping import areacode_to_hood, area_list
+from data_handling import DataHandler
 from db_flask.manage import Disposal, db, Acquisition, AcquisitionArea, RejectedArea, PostCodeGeoData
 import email_service
 from graphic_detail import DataProducer
@@ -196,4 +197,6 @@ def upload_disposal(msg, uid):
     return True
 
 
-DataProducer(db.session).save_data_for_web()
+# DataProducer(db.session).save_data_for_web()
+dh = DataHandler(db.session, esx, area_list, dsp_regex, acq_regex)
+dh.upt()

@@ -28,7 +28,7 @@ class Extractor(object):
 
     def message_bodies(self):
         dic = {}
-        self.mail.select(src_apt)
+        self.mail.select(src)
         uids = self.uids_from_search(sch_str)
         for u in uids:
             dic[u] = self.message_body(u)

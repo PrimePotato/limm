@@ -15,3 +15,5 @@ def areacode_to_hood(ac):
 
 def area_list():
     return cfg['areas']
+
+
