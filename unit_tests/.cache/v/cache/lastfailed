@@ -1,1 +1,3 @@
-{}
+{
+  "test_graphic_detail.py::test_data_producer_save_data_for_web": true
+}

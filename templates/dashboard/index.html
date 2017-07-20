@@ -44,10 +44,10 @@
 			
 		}
 		
-		.bar {
-		  fill: steelblue;
-		  fill-opacity: .9;
-		}
+		<!-- .bar { -->
+		  <!-- fill: steelblue; -->
+		  <!-- fill-opacity: .9; -->
+		<!-- } -->
 
 		
 		#barChartBR {
@@ -91,7 +91,7 @@
 			bounds: mybounds,
 			maxZoom: 17,
 			minZoom: 13
-		}).addTo(map);
+		}).addTo(map);  
 		
 		
 		function getColor(d) {
@@ -127,9 +127,6 @@
 				fillOpacity: higlighted_opacity
 			});
 
-			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-				layer.bringToFront();
-			}
 		}
 		
 		function resetHighlight(e) {
@@ -143,15 +140,33 @@
 				fillOpacity: standard_opacity
 			});
 		}
+		
+		function sector_click(e) {
+			var layer = e.target;
 
+			layer.setStyle({
+				fillOpacity: 0.3
+			});
+		}
+			
+	
 		
 		function onEachFeature(feature, layer) {
 		layer.on({
 			mouseover: highlightFeature,
-			mouseout: resetHighlight
+			mouseout: resetHighlight,
+			click: sector_click
 		});
-	}
-		
+		}
+	
+		function bar_colour(area, highlight) {
+			if (area == highlight) {
+				return 'orange';
+				}
+			else {
+				return 'teal';
+				}
+		}
 		
 		d3.json("pyg_test.geojson", function(error, data) {
 			console.log(data)
@@ -166,65 +181,101 @@
 								"<b>Average Rent</b>: " + layer.feature.properties.average_rent);
 			});
 		});
-	
 		
-		var margin = {top: 100, right: 30, bottom: 200, left: 40}
-			<!-- width = attr('width') -->
-			width = 600
-			height = 600
-			<!-- height = attr('height') -->
 		
-		var x = d3.scale.ordinal()
-			.rangeRoundBands([0, width], 0.1, 0.2);
 
-		var y = d3.scale.linear()
-			.range([height, 0]);
-
-		var barChartTL = d3.select("#barChartTL")
-			.append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
-		  .append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		
-		d3.csv("disposal_average_rent_by_hood.csv", function(error, data) {
-		  x.domain(data.map(function(d) { return d.my_hood; }));
-		  y.domain([0, d3.max(data, function(d) { return d.rent; })]);
-
-		  barChartTL.append("g")
-			  .attr("class", "x axis")
-			  .attr("transform", "translate(0," + height + ")")
-			  .call(d3.svg.axis().scale(x).orient("bottom"))
-			 .selectAll("text")
-				.attr("y", 0)
-				.attr("x", 10)
-				.attr("dy", "0.35em")
-				.attr("transform", "rotate(90)")
-				.style("font-size","15px")
-				.style("text-anchor", "start");
-
-		  barChartTL.append("g")
-			   .attr("class", "y axis")
-			   .call(d3.svg.axis().scale(y).orient("left"))
-			 .selectAll("text")
-			   .style("font-size","15px");
-		  
-		  barChartTL.append("text")
-				.attr("x", (width / 2))             
-				.attr("y", 0 - (margin.top / 2))
-				.attr("text-anchor", "middle")
-				.style("font-size", "25px")  
-				.text("Average rent by area (£ psf)");
+		function draw_bar_chart(highlight) {
 			
-		  barChartTL.selectAll(".bar")
-			  .data(data)
-			.enter().append("rect")
-			  .attr("class", "bar")
-			  .attr("x", function(d) { return x(d.my_hood); })
-			  .attr("width", x.rangeBand())
-			  .attr("y", function(d) { return y(d.rent); })
-			  .attr("height", function(d) { return height - y(d.rent); });
-		});
+			var chartDiv = document.getElementById("#barChartTL");		
+			var margin = {top: 100, right: 30, bottom: 200, left: 40}
+			,  	width= 500
+			, 	height = 400
+			, 	aspect = width / height;
+			  <!-- <!-- ,	width = window.innerWidth/2 --> -->
+			  <!-- , height = window.innerHeight/2 -->
+			  <!-- , width = $container.width() -->
+			  <!-- , height = $container.height() -->
+			  
+			  
+			  <!-- , width = parseInt(d3.select('#barChartTL').style('width'), 10) -->
+			  <!-- , width = width - margin.left - margin.right -->
+			  <!-- , height = 400 -->
+			  <!-- , percent = d3.format('%'); -->
+			<!-- var width = chartDiv.clientWidth; -->
+			<!-- var height = chartDiv.clientHeight; -->
+			
+			
+			var x = d3.scale.ordinal()
+				.rangeRoundBands([0, width], 0.1, 0.2);
+
+			var y = d3.scale.linear()
+				.range([height, 0]);
+
+			var barChartTL = d3.select("#barChartTL")
+				.append("svg")
+					.attr("width", width + margin.left + margin.right)
+					.attr("height", height + margin.top + margin.bottom)
+					<!-- .attr("width", '100%') -->
+					<!-- .attr("height", '100%') -->
+					<!-- .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) ) -->
+					<!-- .attr('preserveAspectRatio','xMinYMin') -->
+				<!-- .append("g") -->
+					<!-- .attr("transform", "translate(" + Math.min(width,height) / 2 + "," + Math.min(width,height) / 2 + ")"); -->
+				.append("g")
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			
+			d3.csv("disposal_average_rent_by_hood.csv", function(error, data) {
+			  x.domain(data.map(function(d) { return d.my_hood; }));
+			  y.domain([0, d3.max(data, function(d) { return d.rent; })]);
+
+			  barChartTL.append("g")
+				  .attr("class", "x axis")
+				  .attr("transform", "translate(0," + height + ")")
+				  .call(d3.svg.axis().scale(x).orient("bottom"))
+				 .selectAll("text")
+					.attr("y", 0)
+					.attr("x", 10)
+					.attr("dy", "0.35em")
+					.attr("transform", "rotate(90)")
+					.style("font-size","15px")
+					.style("text-anchor", "start");
+
+			  barChartTL.append("g")
+				   .attr("class", "y axis")
+				   .call(d3.svg.axis().scale(y).orient("left"))
+				 .selectAll("text")
+				   .style("font-size","15px");
+			  
+			  barChartTL.append("text")
+					.attr("x", (width / 2))             
+					.attr("y", 0 - (margin.top / 2))
+					.attr("text-anchor", "middle")
+					.style("font-size", "25px")  
+					.text("Average rent by area (£ psf)");
+				
+			  barChartTL.selectAll(".bar")
+				  .data(data)
+				.enter().append("rect")
+				  .attr("class", "bar")
+				  .attr("x", function(d) { return x(d.my_hood); })
+				  .attr("fill", function(d, highlight) {return bar_colour(d, highlight); })
+				  .attr("width", x.rangeBand())
+				  .attr("y", function(d) { return y(d.rent); })
+				  .attr("height", function(d) { return height - y(d.rent); });
+			});
+			
+			<!-- d3.select(window).on('resize', resize);  -->
+
+			<!-- function resize() { -->
+				<!-- barChartTL.attr("width",  window.innerWidth/2); -->
+				<!-- barChartTL.attr("height",  window.innerWidth / (2*aspect)); -->
+				<!-- console.log(window.innerWidth / aspect); -->
+			<!-- } -->
+		}
+		
+		draw_bar_chart();
+		
 </script>
 </body>
 </html>

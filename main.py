@@ -6,6 +6,7 @@ from geoalchemy2 import WKTElement
 from area_mapping import areacode_to_hood, area_list
 from db_flask.manage import Disposal, db, Acquisition, AcquisitionArea, RejectedArea, PostCodeGeoData
 import email_service
+from graphic_detail import DataProducer
 from scraper import dsp_regex, extract_field, acq_regex
 from datetime import datetime as dt
 from geopy.geocoders import Nominatim
@@ -195,39 +196,4 @@ def upload_disposal(msg, uid):
     return True
 
 
-def del_all():
-    Disposal.query.delete()
-    Acquisition.query.delete()
-
-
-def all_disposals():
-    qry = db.session.query(Disposal).all()
-    d = pd.DataFrame([l.to_dict() for l in qry])
-    d.index.name = 'id'
-    return d
-
-
-def all_acquisitions():
-    qry = db.session.query(Acquisition).all()
-    d = pd.DataFrame([l.to_dict() for l in qry])
-    d.index.name = 'id'
-    return d
-
-
-def all_acquisition_areas():
-    qry = db.session.query(AcquisitionArea).all()
-    d = pd.DataFrame([l.to_dict() for l in qry])
-    d.index.name = 'id'
-    return d
-
-
-def split_areas(s):
-    spt = s.split((', '))
-    spt2 = [a.split('/') if '/' in a else a for a in spt]
-    spt_final = []
-    for s in spt2:
-        if isinstance(s, list):
-            [spt_final.append(x) for x in s]
-        else:
-            spt_final.append(s)
-    return spt_final
+DataProducer(db.session).save_data_for_web()

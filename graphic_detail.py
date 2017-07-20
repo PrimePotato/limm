@@ -1,31 +1,71 @@
-from main import all_disposals, all_acquisition_areas, all_acquisitions
+from db_flask.manage import Disposal, Acquisition, AcquisitionArea
 from datetime import date
 import pandas as pd
 
-df_disposals = all_disposals()
-df_acquisitions = all_acquisitions()
-df_acquisition_areas = all_acquisition_areas()
 
+class DataProducer(object):
+    def __init__(self, session):
+        self.session = session
+        self.df_disposals = self.all_disposals()
+        self.df_acquisitions = self.all_acquisitions()
+        self.df_acquisition_areas = self.all_acquisition_areas()
 
-def save_csv_for_web():
-    lam = 0.99
-    df_disposals['days_past'] = (date.today() - df_disposals['date_posted']).apply(lambda x: x.days)
-    df_disposals['time_weight'] = df_disposals['days_past'].apply(lambda x: lam ** x)
+    def all_disposals(self):
+        qry = self.session.query(Disposal).all()
+        d = pd.DataFrame([l.to_dict() for l in qry])
+        d.index.name = 'id'
+        return d
 
-    gby_hood = df_disposals.groupby('my_hood')
-    mh = gby_hood['rent'].mean()
-    mh[mh.notnull()].to_csv('web_data/disposal_average_rent_by_hood.csv', header=True)
+    def all_acquisitions(self):
+        qry = self.session.query(Acquisition).all()
+        d = pd.DataFrame([l.to_dict() for l in qry])
+        d.index.name = 'id'
+        return d
 
-    gby_area = df_disposals.groupby('area_code')
-    ma = gby_area['rent'].mean()
-    ma[ma.notnull()].to_csv('web_data/disposal_average_rent_by_area_code.csv', header=True)
+    def all_acquisition_areas(self):
+        qry = self.session.query(AcquisitionArea).all()
+        d = pd.DataFrame([l.to_dict() for l in qry])
+        d.index.name = 'id'
+        return d
 
-    gby_des_aa = df_acquisition_areas.groupby('description')
-    da = gby_des_aa['id'].count()
-    da.name, da.index.name = 'count', 'name'
+    @staticmethod
+    def split_areas(s):
+        spt = s.split(', ')
+        spt2 = [a.split('/') if '/' in a else a for a in spt]
+        spt_final = []
+        for s in spt2:
+            if isinstance(s, list):
+                [spt_final.append(x) for x in s]
+            else:
+                spt_final.append(s)
+        return spt_final
 
-    ch = gby_hood['rent'].count()
-    cnt = pd.concat([da, ch], axis=1)
-    cnt.fillna(0.).to_csv('web_data/count_by_hood.csv', header=True)
+    def count_by_hood(self):
+        gby_hood = self.df_disposals.groupby('my_hood')
+        gby_des_aa = self.df_acquisition_areas.groupby('description')
+        da = gby_des_aa['id'].count()
+        da.name, da.index.name = 'count', 'name'
 
-save_csv_for_web()
+        ch = gby_hood['rent'].count()
+        cnt = pd.concat([da, ch], axis=1)
+        return cnt.fillna(0.)
+
+    def disposal_average_rent_by_hood(self):
+        gby_hood = self.df_disposals.groupby('my_hood')
+        mh = gby_hood['rent'].mean()
+        return mh[mh.notnull()]
+
+    def disposal_average_rent_by_area_code(self):
+        gby_area = self.df_disposals.groupby('area_code')
+        ma = gby_area['rent'].mean()
+        return ma[ma.notnull()]
+
+    def save_data_for_web(self):
+        reports = {
+            'web_data/count_by_hood.csv': self.count_by_hood(),
+            'web_data/disposal_average_rent_by_hood.csv': self.disposal_average_rent_by_hood(),
+            'web_data/disposal_average_rent_by_area_code.csv': self.disposal_average_rent_by_area_code()
+        }
+        for fn, df in reports.items():
+            print ('Saving {}'.format(fn))
+            df.to_csv(fn, header=True)
