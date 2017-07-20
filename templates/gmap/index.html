@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://maps.googleapis.com/maps/api/js"></script>
+  <script src="//d3js.org/d3.v3.min.js"></script>
+  <script src="//d3js.org/topojson.v1.min.js"></script>
+
+  <style>
+    #map {
+      height: 1000px;
+      width: 100%;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+    var map = new google.maps.Map(d3.select("#map").node(), {
+      zoom: 8,
+      center: new google.maps.LatLng(43.469740, 10.946157),
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      styles: [{
+        "stylers": [{
+          "saturation": -75
+        }, {
+          "lightness": 10
+        }]
+      }]
+    });
+
+    d3.json("https://jsonblob.com/api/1e7c9245-e4b6-11e6-90ab-914a66f2a924", function(error, data) {
+      if (error) throw error
+
+      //console.log(data[0].comuni[0].geometry.coordinates);
+      var overlay = new google.maps.OverlayView();
+
+      overlay.onAdd = function() {
+
+        var layer = d3.select(this.getPanes().overlayLayer).append("div")
+
+        overlay.draw = function() {
+
+          layer.select('svg').remove();
+
+          var w = 1500;
+          var h = 1500;
+
+          var color = ['#ffe6e6', '#ffcccc', '#ffb3b3', '#ff9999', '#ff8080', '#ff6666', '#ff4d4d', '#ff3333', '#ff1a1a'];
+          var heat_color = d3.scale.linear().domain([0, 1]).range(['#b2df8a', '#ff7f00']).interpolate(d3.interpolateHcl);
+
+          var overlayProjection = this.getProjection();
+
+          // Turn the overlay projection into a d3 projection
+          var googleMapProjection = function(coordinates) {
+            var googleCoordinates = new google.maps.LatLng(coordinates[1], coordinates[0]);
+            var pixelCoordinates = overlayProjection.fromLatLngToDivPixel(googleCoordinates);
+            return [pixelCoordinates.x, pixelCoordinates.y];
+          }
+
+          var path = d3.geo.path().projection(googleMapProjection);
+
+          var svg = layer.append("svg")
+            .attr('width', w)
+            .attr('height', h)
+
+          var g = svg.selectAll("g")
+            .data(data)
+            .enter()
+            .append("g");
+
+          g.selectAll("path")
+            .data(function(d) {
+              return d.comuni;
+            })
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr('class', 'state selected')
+            .style("fill", function(d, i) {
+              return color[i % color.length];
+            })
+            .style('opacity', .7);
+
+        }
+      }
+      overlay.setMap(map);
+
+    });
+  </script>
+</body>
+
+</html>

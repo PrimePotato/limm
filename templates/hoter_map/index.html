@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Choropleth</title>
+	<!-- <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" /> -->
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+	<!-- <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js&callback=initMap"></script> -->
+	<script src="//maps.google.com/maps/api/js?key=AIzaSyB6xgzcDCf7J42BhuCPDF9C3W5r5d1lT2A"></script>
+    <style type="text/css">
+    body{
+        background:white;
+    }
+    svg {
+      background: none;
+    }
+    svg:active {
+      cursor: move;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+    }
+    .globe {
+      fill: black;
+      fill-opacity: 1;
+      stroke: #111;
+      stroke-width:0.1px;
+    }
+    #first_layer path {
+      stroke: #333;
+      stroke-linecap: round;
+      stroke-linejoin: round;			
+    }
+	
+	.svg-container {
+		display: inline-block;
+		position: relative;
+		width: 100%;
+		padding-bottom: 100%; /* aspect ratio */
+		vertical-align: top;
+		overflow: hidden;
+	}
+	.svg-content-responsive {
+		display: inline-block;
+		position: absolute;
+		top: 10px;
+		left: 0;
+	}	
+	
+    </style>
+  </head>
+  <body>
+
+    <script type="text/javascript">
+	
+	
+	var sql = cartodb.SQL({ user: 'primepotato' });
+	sql.execute("select * from public.london_pcds WHERE the_geom IS NOT NULL")
+	
+	
+    // Define our SVG element outside our SQL functions
+	
+	var width = 1000,
+		height = 1000;
+	
+	var	lat = 51.5074,
+		lng = 0.1278;
+	
+	
+    var svg = d3.select("body")
+            .append("svg")
+            .call(d3.behavior.zoom()
+                .on("zoom", redraw))
+			.attr("width", width)
+			.attr("height", height)
+            .append("g");
+    // Define the color scale for our choropleth
+    var fill = d3.scale.linear()
+        .domain([0, 1000, 10000000, 100000000, 1000000000])
+        .range(["#333", "#6ab9fa", "#39a2f8", "#098bf5", "#0666b4"]);
+
+		
+		
+	var projection = d3.geo.albers()
+		.center([0, lat])
+		.rotate([lng, 0])
+		.parallels([50, 60])
+		.scale(1200 * 150)
+		.translate([width / 2, height / 2]);
+
+	var path = d3.geo.path()
+		.projection(projection);			
+	
+  
+	
+	
+    // Using the graticule to draw the globe background color
+    <!-- var graticule = d3.geo.graticule(); -->
+    <!-- svg.append("path") -->
+        <!-- .datum(graticule.outline) -->
+        <!-- .attr("class", "globe") -->
+        <!-- .attr("d", path); -->
+    <!-- // Add our first layer -->
+    svg.append("g").attr("id", "first_layer");
+    // Use D3 AJAX method to query CartoDB table
+    d3.json("https://primepotato.carto.com:443/api/v2/sql?q=select * from public.postcode_districts WHERE the_geom IS NOT NULL &format=geojson&dp=5", function(collection) {
+        svg.select("#first_layer")
+            .selectAll("path")
+              .data(collection.features)
+            .enter().append("path")
+            .attr("stroke-width", "0.1px")
+            .attr("fill-opacity", "0.1")
+            .on("mouseover", function(t,d){
+              // Mouseover, remove transparency
+              d3.select(this)
+                .attr("stroke-width", "0.2px")
+                .attr("fill-opacity", "0.9");
+              })
+            .on("mouseout", function(t,d){
+              // Mouseover, replace transparency
+              d3.select(this)
+                .attr("stroke-width", "0.1px")
+                .attr("fill-opacity", "0.7");
+              })
+            .attr("d", path.projection(projection));
+		
+	
+    <!-- // Handles our zoom -->
+		function redraw() {
+		  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+		}
+    </script>
+  </body>
+</html>

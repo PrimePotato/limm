@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Heat Map</title>
+
+    <link 
+        rel="stylesheet" 
+        href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
+    />
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <script
+        src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js">
+    </script>
+	
+	<style>
+	
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+		
+		#map {
+            height: 100%;
+            width: 50%;
+			--lat: 51.5175;
+			--lng: -0.125;
+			--bound_sw: [51.312, -0.25];
+			--bound_ne: [51.774, 0];
+			--standard_opacity: 0.7;
+			--higlighted_opacity: 0.9;
+        }
+		
+		#barChartTL {
+			position:absolute;
+			top:0%;
+			left:50%;
+			height: 1000;
+			width: 1000;
+			
+		}
+		
+		.bar {
+		  fill: steelblue;
+		  fill-opacity: .9;
+		}
+
+		
+		#barChartBR {
+			position:absolute;
+			top:160px;
+			left:410px;
+		}
+		
+    </style>
+    
+</head>
+<body>
+
+	<div id="map"></div>
+	
+	<div id="barChartTL"></div>
+
+	<script type="text/javascript">
+		
+		var map_elem = document.getElementById("map");
+		
+		var standard_opacity = getComputedStyle(map_elem).getPropertyValue('--standard_opacity'),
+			higlighted_opacity = getComputedStyle(map_elem).getPropertyValue('--higlighted_opacity')
+		
+		var southWest = L.latLng(getComputedStyle(map_elem).getPropertyValue('--bound_sw')),
+			northEast = L.latLng(getComputedStyle(map_elem).getPropertyValue('--bound_ne')),
+            mybounds = L.latLngBounds(southWest, northEast);
+				
+		
+        var map = L.map('map')
+			.setView([getComputedStyle(map_elem).getPropertyValue('--lat'), getComputedStyle(map_elem).getPropertyValue('--lng')], 14);
+		
+        mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+			
+		
+		map.bounds = mybounds
+		
+		L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+			subdomains: 'abcd',
+			bounds: mybounds,
+			maxZoom: 17,
+			minZoom: 13
+		}).addTo(map);
+		
+		
+		function getColor(d) {
+		return d > 90  	? '#800026' :
+			   d > 80  	? '#BD0026' :
+			   d > 70  	? '#E31A1C' :
+			   d > 60  	? '#FC4E2A' :
+			   d > 50   ? '#FD8D3C' :
+			   d > 40   ? '#FEB24C' :
+			   d > 30   ? '#FED976' :
+						  '#FFEDA0';
+		}
+		
+		function style(feature) {
+		return {
+			fillColor: getColor(feature.properties.average_rent),
+			weight: 1,
+			opacity: 0.5,
+			color: 'white',
+			dashArray: '',
+			fillOpacity: standard_opacity
+		};
+	}
+		
+		function highlightFeature(e) {
+			var layer = e.target;
+
+			layer.setStyle({
+				weight: 2,
+				color: '#666',
+				opacity: 0.5,
+				dashArray: '',
+				fillOpacity: higlighted_opacity
+			});
+
+			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+				layer.bringToFront();
+			}
+		}
+		
+		function resetHighlight(e) {
+			var layer = e.target;
+
+			layer.setStyle({
+				weight: 1,
+				color: 'white',
+				opacity: 0.5,
+				dashArray: '',
+				fillOpacity: standard_opacity
+			});
+		}
+
+		
+		function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight
+		});
+	}
+		
+		
+		d3.json("pyg_test.geojson", function(error, data) {
+			console.log(data)
+			var geojson = L.geoJson(data, {
+				style: style,
+				onEachFeature: onEachFeature
+			}).addTo(map);
+			geojson.eachLayer(function (layer) {
+				layer.bindPopup("<b>Wider Market</b>: " + layer.feature.properties.wider_market + "<br> " +
+								"<b>Sub Market</b>: " + layer.feature.properties.sub_market + "<br> " +
+								"<b>Postcode Sector</b>: " + layer.feature.properties.sector + "<br> " +
+								"<b>Average Rent</b>: " + layer.feature.properties.average_rent);
+			});
+		});
+	
+		
+		var margin = {top: 100, right: 30, bottom: 200, left: 40}
+			<!-- width = attr('width') -->
+			width = 600
+			height = 600
+			<!-- height = attr('height') -->
+		
+		var x = d3.scale.ordinal()
+			.rangeRoundBands([0, width], 0.1, 0.2);
+
+		var y = d3.scale.linear()
+			.range([height, 0]);
+
+		var barChartTL = d3.select("#barChartTL")
+			.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+		d3.csv("disposal_average_rent_by_hood.csv", function(error, data) {
+		  x.domain(data.map(function(d) { return d.my_hood; }));
+		  y.domain([0, d3.max(data, function(d) { return d.rent; })]);
+
+		  barChartTL.append("g")
+			  .attr("class", "x axis")
+			  .attr("transform", "translate(0," + height + ")")
+			  .call(d3.svg.axis().scale(x).orient("bottom"))
+			 .selectAll("text")
+				.attr("y", 0)
+				.attr("x", 10)
+				.attr("dy", "0.35em")
+				.attr("transform", "rotate(90)")
+				.style("font-size","15px")
+				.style("text-anchor", "start");
+
+		  barChartTL.append("g")
+			   .attr("class", "y axis")
+			   .call(d3.svg.axis().scale(y).orient("left"))
+			 .selectAll("text")
+			   .style("font-size","15px");
+		  
+		  barChartTL.append("text")
+				.attr("x", (width / 2))             
+				.attr("y", 0 - (margin.top / 2))
+				.attr("text-anchor", "middle")
+				.style("font-size", "25px")  
+				.text("Average rent by area (£ psf)");
+			
+		  barChartTL.selectAll(".bar")
+			  .data(data)
+			.enter().append("rect")
+			  .attr("class", "bar")
+			  .attr("x", function(d) { return x(d.my_hood); })
+			  .attr("width", x.rangeBand())
+			  .attr("y", function(d) { return y(d.rent); })
+			  .attr("height", function(d) { return height - y(d.rent); });
+		});
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Heat Map</title>
+
+    <link 
+        rel="stylesheet" 
+        href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
+    />
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <script
+        src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js">
+    </script>
+	<script 
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">
+	</script>
+	<style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+		
+		#map {
+            height: 100%;
+            width: 100%;
+        }
+		
+    </style>
+    
+</head>
+<body>
+
+	<div id="map"></div>
+
+	<script type="text/javascript">
+
+		var southWest = L.latLng(51.312, -0.25),
+			northEast = L.latLng(51.774, 0),
+            mybounds = L.latLngBounds(southWest, northEast);
+				
+        var map = L.map('map')
+			.setView([51.5175, -0.125], 14);
+						
+        mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+					
+		map.bounds = mybounds
+       <!-- L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', { -->
+			<!-- maxZoom: 18, -->
+			<!-- attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' -->
+		<!-- }).addTo(map); -->
+		
+		L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+			subdomains: 'abcd',
+			bounds: mybounds,
+			maxZoom: 17,
+			minZoom: 13
+		}).addTo(map);
+		
+		<!-- L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', { -->
+			<!-- attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>', -->
+			<!-- subdomains: 'abcd', -->
+			<!-- maxZoom: 19 -->
+		<!-- }).addTo(map); -->
+		
+			/* Initialize the SVG layer */
+	<!-- map._initPathRoot()     -->
+	
+	
+	
+	function getColor(d) {
+    return d > 90  	? '#800026' :
+           d > 80  	? '#BD0026' :
+           d > 70  	? '#E31A1C' :
+           d > 60  	? '#FC4E2A' :
+           d > 50   ? '#FD8D3C' :
+           d > 40   ? '#FEB24C' :
+           d > 30   ? '#FED976' :
+                      '#FFEDA0';
+	}
+	
+	function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.rent),
+        weight: 1,
+        opacity: 0.5,
+        color: 'white',
+        dashArray: '',
+        fillOpacity: 0.5
+    };
+	}
+	
+	function ptl(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: Math.sqrt(feature.properties.size_max/10), fillOpacity: 0.85});
+	}
+
+	d3.json("point_heat_2.geojson", function(error, data) {
+		console.log(data)
+		var geojson = L.geoJson(data, {
+			style: style,
+			pointToLayer: ptl,
+		}).addTo(map);
+	});
+	
+
+</script>
+</body>
+</html>

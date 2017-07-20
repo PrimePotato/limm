@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative;
+  width: 960px;
+}
+
+.axis text {
+	font: 10px sans-serif;
+	y: 0;
+	x: 10;
+	dy: 0.35em;
+	transform: rotate(90)
+	font-size: 15px
+	text-anchor: start
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .9;
+}
+
+.x.axis path {
+  display: none;
+}
+
+label {
+  position: absolute;
+  top: 10px;
+  right: -200px;
+}
+
+</style>
+<body>
+<label><input type="checkbox"> Sort values</label>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 100, right: 30, bottom: 200, left: 40},
+    width = 1200 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], 0.1, 0.2);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("disposal_average_rent_by_hood.csv", type, function(error, data) {
+  x.domain(data.map(function(d) { return d.my_hood; }));
+  y.domain([0, d3.max(data, function(d) { return d.rent; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.svg.axis().scale(x).orient("bottom"))
+	 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start");
+
+  svg.append("g")
+       .attr("class", "y axis")
+       .call(d3.svg.axis().scale(y).orient("left"))
+	 .selectAll("text")
+	   .style("font-size","15px");
+  
+  svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+		.style("font-size", "25px")  
+        .text("Average rent by area (£ psf)");
+	
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.my_hood); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.rent); })
+      .attr("height", function(d) { return height - y(d.rent); });
+	  
+    
+  d3.select("input").on("change", change);
+
+  var sortTimeout = setTimeout(function() {
+    d3.select("input").property("checked", true).each(change);
+  }, 4000);
+
+  function change() {
+    clearTimeout(sortTimeout);
+
+    // Copy-on-write since tweens are evaluated after a delay.
+    var x0 = x.domain(data.sort(this.checked
+        ? function(a, b) { return b.rent - a.rent; }
+        : function(a, b) { return d3.ascending(a.my_hood, b.my_hood); })
+        .map(function(d) { return d.my_hood; }))
+        .copy();
+
+    svg.selectAll(".bar")
+        .sort(function(a, b) { return x0(a.my_hood) - x0(b.my_hood); });
+
+    var transition = svg.transition().duration(500),
+        delay = function(d, i) { return i * 50; };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function(d) { return x0(d.my_hood); });
+
+    transition.select(".x.axis")
+        .call(d3.svg.axis().scale(x).orient("bottom"))
+			 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start")
+      .selectAll("g")
+        .delay(delay);
+		
+	}
+});
+
+function type(d) {
+  d.rent = +d.rent;
+  return d;
+}
+
+</script>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative;
+  width: 960px;
+}
+
+.axis text {
+	font: 10px sans-serif;
+	y: 0;
+	x: 10;
+	dy: 0.35em;
+	transform: rotate(90)
+	font-size: 15px
+	text-anchor: start
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .9;
+}
+
+.bar2 {
+  fill: orange;
+  fill-opacity: .9;
+}
+
+.x.axis path {
+  display: none;
+}
+
+label {
+  position: absolute;
+  top: 10px;
+  right: -200px;
+}
+
+form {
+  position: absolute;
+  top: 10px;
+  right: -200px;
+}
+
+form input[type="radio"]{
+  <!-- position: absolute;  -->
+  <!-- display:inline-block; -->
+  <!-- margin: 0px; -->
+}
+
+<!-- form input[type="radio"] + label span { -->
+    <!-- display:inline-block; -->
+    <!-- width:19px; -->
+    <!-- height:19px; -->
+<!-- } -->
+
+
+
+</style>
+<body>
+
+<form>
+  <div class="label">Sort by:</div> 
+  <input type="radio" name="mode" value="disposals" checked> Disposals<br>
+  <input type="radio" name="mode" value="acquisitions"> AoIs<br>
+  <input type="radio" name="mode" value="name"> Name  
+</form> 
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 100, right: 50, bottom: 200, left: 50},
+    width = 1200 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], 0.1, 0.2);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+	
+var x0 = d3.scale.ordinal().rangeRoundBands([0, width], .4);
+var x1 = d3.scale.ordinal();
+
+var y0 = d3.scale.linear().range([height, 0]);
+var y1 = d3.scale.linear().range([height, 0]);
+
+
+var xAxis = d3.svg.axis()
+    .scale(x0)
+    .orient("bottom")
+    .ticks(5);
+
+var yAxisLeft = d3.svg.axis()
+    .scale(y0)
+    .orient("left")
+    .tickFormat(function(d) { return parseInt(d) });
+
+var yAxisRight = d3.svg.axis()
+    .scale(y1)
+    .orient("right")
+    .tickFormat(function(d) { return parseInt(d) });
+	
+var svg = d3.select("body").append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+  .append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("count_by_hood.csv", type, function(error, data) {
+
+  x0.domain(data.map(function(d) { return d.name; }));
+  x1.domain(['acquisitions','disposals']).rangeRoundBands([0, x0.rangeBand()]);
+  
+  y0.domain([0, d3.max(data, function(d) { return d.disposals; })]);
+  y1.domain([0, d3.max(data, function(d) { return d.acquisitions; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+	 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start");
+
+  svg.append("g")
+    .attr("class", "y0 axis")
+    .call(yAxisLeft)
+  .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .style("fill", "steelblue")
+	.style("font-size","15px")
+    .text("Disposals");
+  
+  svg.append("g")
+    .attr("class", "y1 axis")
+    .attr("transform", "translate(" + width + ",0)")
+    .call(yAxisRight)
+  .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", -16)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .style("fill", "orange")
+	.style("font-size","15px")
+    .text("Acquisitions");
+  
+  svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+		.style("font-size", "25px")  
+        .text("Count of Areas of Interest vs Disposals by sub market");
+	
+  svg.selectAll(".bar")
+      .data(data).enter()
+	.append("rect")
+      .attr("class", "bar")
+	  .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x0(d.name);})
+	  .attr("y", function(d) { return y0(d.disposals); })
+      .attr("height", function(d) { return height - y0(d.disposals); });
+
+  svg.selectAll(".bar2")
+      .data(data).enter()
+	.append("rect")
+      .attr("class", "bar2")
+	  .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x0(d.name)+ x1.rangeBand(); })
+	  .attr("y", function(d) { return y1(d.acquisitions); })
+      .attr("height", function(d) { return height - y1(d.acquisitions); });
+  
+  svg.select('.y0.axis')
+    .selectAll('.tick')
+		.style("fill","steelblue");
+  
+  svg.select('.y0.axis')
+	.selectAll('text')
+		.style("font-size", "15px");
+
+  svg.select('.y1.axis')
+    .selectAll('.tick')
+    .style("fill","orange");
+	
+  svg.select('.y1.axis')
+	.selectAll('text')
+		.style("font-size", "15px");
+
+  d3.selectAll("input").on("change", changed);	
+
+  
+  function changed() {
+	console.log(this.value);
+    if (this.value  === 'acquisitions') sort_acquisitions();
+	else if (this.value === 'disposals') sort_disposals();
+    else sort_name();
+	}
+  
+  function sort_disposals() {
+	var xx = x0.domain(data.sort(function(a, b) { return b.disposals - a.disposals; })
+        .map(function(d) { return d.name; }))
+        .copy();
+
+    svg.selectAll(".bar")
+        .sort(function(a, b) { return xx(a.name) - xx(b.name); });
+
+    var transition = svg.transition().duration(500),
+        delay = function(d, i) { return i * 30; };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function(d) { return xx(d.name); });
+	
+	 transition.selectAll(".bar2")
+        .delay(delay)
+        .attr("x", function(d) { return xx(d.name) + x1.rangeBand(); });
+
+    transition.select(".x.axis")
+        .call(xAxis)
+			 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start")
+      .selectAll("g")
+        .delay(delay);
+  }
+  
+  
+  function sort_acquisitions() {
+	var xx = x0.domain(data.sort(function(a, b) { return a.acquisitions - b.acquisitions; })
+        .map(function(d) { return d.name; }))
+        .copy();
+
+    svg.selectAll(".bar")
+        .sort(function(a, b) { return xx(a.name) - xx(b.name); });
+
+    var transition = svg.transition().duration(500),
+        delay = function(d, i) { return i * 30; };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function(d) { return xx(d.name); });
+	
+	 transition.selectAll(".bar2")
+        .delay(delay)
+        .attr("x", function(d) { return xx(d.name) + x1.rangeBand(); });
+
+    transition.select(".x.axis")
+        .call(xAxis)
+			 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start")
+      .selectAll("g")
+        .delay(delay);
+	}
+	
+  function sort_name() {
+	var xx = x0.domain(data.sort(function(a, b) { return d3.ascending(a.name, b.name); })
+        .map(function(d) { return d.name; }))
+        .copy();
+
+    svg.selectAll(".bar")
+        .sort(function(a, b) { return xx(a.name) - xx(b.name); });
+
+    var transition = svg.transition().duration(500),
+        delay = function(d, i) { return i * 50; };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function(d) { return xx(d.name); });
+	
+	 transition.selectAll(".bar2")
+        .delay(delay)
+        .attr("x", function(d) { return xx(d.name) + x1.rangeBand(); });
+
+    transition.select(".x.axis")
+        .call(xAxis)
+			 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start")
+      .selectAll("g")
+        .delay(delay);
+	}
+	
+	
+	
+});
+
+function type(d) {
+  d.disposals = +d.disposals;
+  return d;
+}
+
+</script>

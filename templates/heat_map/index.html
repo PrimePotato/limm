@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+	
+	.area.B { fill: #CC4D00; }
+	.area.BN { fill: #FFFFFF; }
+	.area.BR { fill: #FE7E00; }
+	.area.BS { fill: #FFFFFF; }
+	.area.CM { fill: #000000; }
+	.area.CR { fill: #FFFF99; }
+	.area.DA { fill: #FFFFCD; }
+	.area.E { fill: #FFB233; }
+	.area.EC { fill: #000000; }
+	.area.EN { fill: #FFB233; }
+	.area.HA { fill: #FE7E00; }
+	.area.IG { fill: #FFFF99; }
+	.area.KT { fill: #CC4D00; }
+	.area.N { fill: #981900; }
+	.area.NP { fill: #FFFFFF; }
+	.area.NW { fill: #660000; }
+	.area.RM { fill: #FFFFCD; }
+	.area.SE { fill: #CC4D00; }
+	.area.SM { fill: #FFFF99; }
+	.area.SW { fill: #660000; }
+	.area.TN { fill: #FFE667; }
+	.area.TW { fill: #981900; }
+	.area.UB { fill: #FFE667; }
+	.area.W { fill: #660000; }
+	.area.WC { fill: #000000; }
+	.area.WD { fill: #FFB233; }
+	
+	.district.B74 { fill: #FE7E00; }
+	.district.BN10 { fill: #FFFFFF; }
+	.district.BR1 { fill: #FFB233; }
+	.district.BR2 { fill: #FFE667; }
+	.district.BR3 { fill: #FFB233; }
+	.district.BR4 { fill: #FFB233; }
+	.district.BR5 { fill: #FFFF99; }
+	.district.BR6 { fill: #FFB233; }
+	.district.BR7 { fill: #FE7E00; }
+	.district.BR8 { fill: #FFFFCD; }
+	.district.BS34 { fill: #FFFFFF; }
+	.district.CM13 { fill: #660000; }
+	.district.CR0 { fill: #FFFFCD; }
+	.district.CR2 { fill: #FFFF99; }
+	.district.CR3 { fill: #FFE667; }
+	.district.CR4 { fill: #FFFFCD; }
+	.district.CR5 { fill: #FFE667; }
+	.district.CR6 { fill: #FE7E00; }
+	.district.CR7 { fill: #FFFFFF; }
+	.district.CR8 { fill: #FFB233; }
+	.district.CR9 { fill: #000000; }
+	.district.DA1 { fill: #FFFFFF; }
+	.district.DA14 { fill: #FFFF99; }
+	.district.DA15 { fill: #FFFFCD; }
+	.district.DA16 { fill: #FFFFCD; }
+	.district.DA17 { fill: #FFFFFF; }
+	.district.DA18 { fill: #FFFFFF; }
+	.district.DA5 { fill: #FFFF99; }
+	.district.DA6 { fill: #FFFF99; }
+	.district.DA7 { fill: #FFFFCD; }
+	.district.DA8 { fill: #FFFFFF; }
+	.district.E1 { fill: #CC4D00; }
+	.district.E10 { fill: #FFFF99; }
+	.district.E11 { fill: #FFE667; }
+	.district.E12 { fill: #FFFFCD; }
+	.district.E13 { fill: #FFFFFF; }
+	.district.E14 { fill: #FFB233; }
+	.district.E15 { fill: #FFFF99; }
+	.district.E16 { fill: #FFFF99; }
+	.district.E17 { fill: #FFFF99; }
+	.district.E18 { fill: #FFE667; }
+	.district.E1W { fill: #CC4D00; }
+	.district.E2 { fill: #FFB233; }
+	.district.E20 { fill: #FE7E00; }
+	.district.E3 { fill: #FFE667; }
+	.district.E4 { fill: #FFFF99; }
+	.district.E5 { fill: #FFB233; }
+	.district.E6 { fill: #FFFFFF; }
+	.district.E7 { fill: #FFFFCD; }
+	.district.E8 { fill: #FE7E00; }
+	.district.E9 { fill: #FFB233; }
+	.district.EC1A { fill: #981900; }
+	.district.EC1M { fill: #981900; }
+	.district.EC1N { fill: #981900; }
+	.district.EC1R { fill: #981900; }
+	.district.EC1V { fill: #981900; }
+	.district.EC1Y { fill: #981900; }
+	.district.EC2A { fill: #660000; }
+	.district.EC2M { fill: #000000; }
+	.district.EC2N { fill: #000000; }
+	.district.EC2P { fill: #FFFFFF; }
+	.district.EC2R { fill: #000000; }
+	.district.EC2V { fill: #000000; }
+	.district.EC2Y { fill: #981900; }
+	.district.EC3A { fill: #000000; }
+	.district.EC3M { fill: #000000; }
+	.district.EC3N { fill: #000000; }
+	.district.EC3R { fill: #000000; }
+	.district.EC3V { fill: #000000; }
+	.district.EC4A { fill: #660000; }
+	.district.EC4M { fill: #000000; }
+	.district.EC4N { fill: #000000; }
+	.district.EC4R { fill: #000000; }
+	.district.EC4V { fill: #660000; }
+	.district.EC4Y { fill: #000000; }
+	.district.EN1 { fill: #FFFF99; }
+	.district.EN2 { fill: #FFE667; }
+	.district.EN3 { fill: #FFFFCD; }
+	.district.EN4 { fill: #FE7E00; }
+	.district.EN5 { fill: #FE7E00; }
+	.district.EN8 { fill: #FFFFFF; }
+	.district.HA0 { fill: #FFFF99; }
+	.district.HA1 { fill: #FFE667; }
+	.district.HA2 { fill: #FFFF99; }
+	.district.HA3 { fill: #FFE667; }
+	.district.HA4 { fill: #FFE667; }
+	.district.HA5 { fill: #FE7E00; }
+	.district.HA6 { fill: #CC4D00; }
+	.district.HA7 { fill: #FE7E00; }
+	.district.HA8 { fill: #FFE667; }
+	.district.HA9 { fill: #FFB233; }
+	.district.IG1 { fill: #FFFFCD; }
+	.district.IG11 { fill: #FFFFFF; }
+	.district.IG2 { fill: #FFFFCD; }
+	.district.IG3 { fill: #FFFFCD; }
+	.district.IG4 { fill: #FFE667; }
+	.district.IG5 { fill: #FFFF99; }
+	.district.IG6 { fill: #FFFFCD; }
+	.district.IG7 { fill: #FFFFFF; }
+	.district.IG8 { fill: #FFB233; }
+	.district.IG9 { fill: #FFE667; }
+	.district.KT1 { fill: #FE7E00; }
+	.district.KT17 { fill: #FFB233; }
+	.district.KT19 { fill: #FFFFCD; }
+	.district.KT2 { fill: #CC4D00; }
+	.district.KT22 { fill: #FFB233; }
+	.district.KT3 { fill: #FFB233; }
+	.district.KT4 { fill: #FFE667; }
+	.district.KT5 { fill: #FFB233; }
+	.district.KT6 { fill: #FFB233; }
+	.district.KT8 { fill: #CC4D00; }
+	.district.KT9 { fill: #FFFF99; }
+	.district.N1 { fill: #CC4D00; }
+	.district.N10 { fill: #CC4D00; }
+	.district.N11 { fill: #FFB233; }
+	.district.N12 { fill: #FE7E00; }
+	.district.N13 { fill: #FFE667; }
+	.district.N14 { fill: #FE7E00; }
+	.district.N15 { fill: #FFFF99; }
+	.district.N16 { fill: #FE7E00; }
+	.district.N17 { fill: #FFFFCD; }
+	.district.N18 { fill: #FFFFFF; }
+	.district.N19 { fill: #CC4D00; }
+	.district.N1C { fill: #660000; }
+	.district.N2 { fill: #981900; }
+	.district.N20 { fill: #CC4D00; }
+	.district.N21 { fill: #FE7E00; }
+	.district.N22 { fill: #FFB233; }
+	.district.N3 { fill: #CC4D00; }
+	.district.N4 { fill: #FFB233; }
+	.district.N5 { fill: #CC4D00; }
+	.district.N6 { fill: #981900; }
+	.district.N7 { fill: #FE7E00; }
+	.district.N8 { fill: #FE7E00; }
+	.district.N9 { fill: #FFFFFF; }
+	.district.NP19 { fill: #FFFFFF; }
+	.district.NW1 { fill: #981900; }
+	.district.NW10 { fill: #FE7E00; }
+	.district.NW11 { fill: #981900; }
+	.district.NW2 { fill: #FE7E00; }
+	.district.NW3 { fill: #660000; }
+	.district.NW4 { fill: #FE7E00; }
+	.district.NW5 { fill: #CC4D00; }
+	.district.NW6 { fill: #CC4D00; }
+	.district.NW7 { fill: #CC4D00; }
+	.district.NW8 { fill: #660000; }
+	.district.NW9 { fill: #FFFF99; }
+	.district.RM1 { fill: #FFFFCD; }
+	.district.RM10 { fill: #FFFFFF; }
+	.district.RM11 { fill: #FFE667; }
+	.district.RM12 { fill: #FFFFCD; }
+	.district.RM13 { fill: #FFFFFF; }
+	.district.RM14 { fill: #FFE667; }
+	.district.RM2 { fill: #FFFF99; }
+	.district.RM3 { fill: #FFFFFF; }
+	.district.RM4 { fill: #FFB233; }
+	.district.RM5 { fill: #FFFFFF; }
+	.district.RM6 { fill: #FFFFFF; }
+	.district.RM7 { fill: #FFFFFF; }
+	.district.RM8 { fill: #FFFFFF; }
+	.district.RM9 { fill: #FFFFFF; }
+	.district.SE1 { fill: #981900; }
+	.district.SE10 { fill: #FE7E00; }
+	.district.SE11 { fill: #FE7E00; }
+	.district.SE12 { fill: #FFFF99; }
+	.district.SE13 { fill: #FFE667; }
+	.district.SE14 { fill: #FFE667; }
+	.district.SE15 { fill: #FFB233; }
+	.district.SE16 { fill: #FFB233; }
+	.district.SE17 { fill: #FFE667; }
+	.district.SE18 { fill: #FFFFCD; }
+	.district.SE19 { fill: #FFFF99; }
+	.district.SE2 { fill: #FFFFFF; }
+	.district.SE20 { fill: #FFFFCD; }
+	.district.SE21 { fill: #CC4D00; }
+	.district.SE22 { fill: #FE7E00; }
+	.district.SE23 { fill: #FFE667; }
+	.district.SE24 { fill: #CC4D00; }
+	.district.SE25 { fill: #FFFFFF; }
+	.district.SE26 { fill: #FFFF99; }
+	.district.SE27 { fill: #FFE667; }
+	.district.SE28 { fill: #FFFFFF; }
+	.district.SE3 { fill: #FE7E00; }
+	.district.SE4 { fill: #FFE667; }
+	.district.SE5 { fill: #FFB233; }
+	.district.SE6 { fill: #FFFFCD; }
+	.district.SE7 { fill: #FFB233; }
+	.district.SE8 { fill: #FFE667; }
+	.district.SE9 { fill: #FFFF99; }
+	.district.SM1 { fill: #FFFFCD; }
+	.district.SM2 { fill: #FFE667; }
+	.district.SM3 { fill: #FFFF99; }
+	.district.SM4 { fill: #FFFFCD; }
+	.district.SM5 { fill: #FFFFCD; }
+	.district.SM6 { fill: #FFFFCD; }
+	.district.SM7 { fill: #981900; }
+	.district.SW1 { fill: #000000; }
+	.district.SW10 { fill: #660000; }
+	.district.SW11 { fill: #981900; }
+	.district.SW12 { fill: #CC4D00; }
+	.district.SW13 { fill: #981900; }
+	.district.SW14 { fill: #981900; }
+	.district.SW15 { fill: #CC4D00; }
+	.district.SW16 { fill: #FFE667; }
+	.district.SW17 { fill: #FE7E00; }
+	.district.SW18 { fill: #CC4D00; }
+	.district.SW19 { fill: #CC4D00; }
+	.district.SW1A { fill: #000000; }
+	.district.SW1E { fill: #660000; }
+	.district.SW1H { fill: #660000; }
+	.district.SW1P { fill: #660000; }
+	.district.SW1V { fill: #981900; }
+	.district.SW1W { fill: #660000; }
+	.district.SW1X { fill: #000000; }
+	.district.SW1Y { fill: #000000; }
+	.district.SW2 { fill: #FFB233; }
+	.district.SW20 { fill: #CC4D00; }
+	.district.SW3 { fill: #660000; }
+	.district.SW4 { fill: #CC4D00; }
+	.district.SW5 { fill: #981900; }
+	.district.SW6 { fill: #981900; }
+	.district.SW7 { fill: #660000; }
+	.district.SW8 { fill: #CC4D00; }
+	.district.SW9 { fill: #FFB233; }
+	.district.TN14 { fill: #FE7E00; }
+	.district.TN16 { fill: #FFFF99; }
+	.district.TW1 { fill: #CC4D00; }
+	.district.TW10 { fill: #981900; }
+	.district.TW11 { fill: #CC4D00; }
+	.district.TW12 { fill: #FE7E00; }
+	.district.TW13 { fill: #FFFFCD; }
+	.district.TW14 { fill: #FFFFFF; }
+	.district.TW15 { fill: #FE7E00; }
+	.district.TW19 { fill: #FFFFFF; }
+	.district.TW2 { fill: #FFB233; }
+	.district.TW3 { fill: #FFFF99; }
+	.district.TW4 { fill: #FFFFCD; }
+	.district.TW5 { fill: #FE7E00; }
+	.district.TW6 { fill: #000000; }
+	.district.TW7 { fill: #FFE667; }
+	.district.TW8 { fill: #FFB233; }
+	.district.TW9 { fill: #981900; }
+	.district.UB1 { fill: #FFFFCD; }
+	.district.UB10 { fill: #FFE667; }
+	.district.UB11 { fill: #000000; }
+	.district.UB2 { fill: #FFFF99; }
+	.district.UB3 { fill: #FFE667; }
+	.district.UB4 { fill: #FFFFCD; }
+	.district.UB5 { fill: #FFFFFF; }
+	.district.UB6 { fill: #FFFF99; }
+	.district.UB7 { fill: #FFFFCD; }
+	.district.UB8 { fill: #FFE667; }
+	.district.UB9 { fill: #FFFF99; }
+	.district.W10 { fill: #981900; }
+	.district.W11 { fill: #660000; }
+	.district.W12 { fill: #CC4D00; }
+	.district.W13 { fill: #FE7E00; }
+	.district.W14 { fill: #981900; }
+	.district.W1B { fill: #000000; }
+	.district.W1C { fill: #000000; }
+	.district.W1D { fill: #000000; }
+	.district.W1F { fill: #000000; }
+	.district.W1G { fill: #660000; }
+	.district.W1H { fill: #660000; }
+	.district.W1J { fill: #000000; }
+	.district.W1K { fill: #000000; }
+	.district.W1N { fill: #660000; }
+	.district.W1P { fill: #FFFFCD; }
+	.district.W1S { fill: #000000; }
+	.district.W1T { fill: #660000; }
+	.district.W1U { fill: #660000; }
+	.district.W1W { fill: #660000; }
+	.district.W1Y { fill: #660000; }
+	.district.W2 { fill: #981900; }
+	.district.W3 { fill: #FE7E00; }
+	.district.W4 { fill: #981900; }
+	.district.W5 { fill: #CC4D00; }
+	.district.W6 { fill: #981900; }
+	.district.W7 { fill: #FFB233; }
+	.district.W8 { fill: #660000; }
+	.district.W9 { fill: #CC4D00; }
+	.district.WC1A { fill: #660000; }
+	.district.WC1B { fill: #660000; }
+	.district.WC1E { fill: #981900; }
+	.district.WC1H { fill: #CC4D00; }
+	.district.WC1N { fill: #981900; }
+	.district.WC1R { fill: #660000; }
+	.district.WC1V { fill: #000000; }
+	.district.WC1X { fill: #CC4D00; }
+	.district.WC2A { fill: #000000; }
+	.district.WC2B { fill: #660000; }
+	.district.WC2E { fill: #000000; }
+	.district.WC2H { fill: #660000; }
+	.district.WC2N { fill: #660000; }
+	.district.WC2R { fill: #660000; }
+	.district.WD23 { fill: #981900; }
+	.district.WD3 { fill: #FFFF99; }
+	
+	div.tooltip {   
+	  position: absolute;           
+	  text-align: center;           
+	  width: 150px;                  
+	  height: 25px;                 
+	  padding: 2px;             
+	  font-size: 10px;     
+	  background: #FFFFE0;
+	  border: 1px;      
+	  border-radius: 8px;           
+	  pointer-events: none;         
+	} 
+	
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+var width = 1000,
+    height = 1000;
+
+var projection = d3.geo.albers()
+    .center([0, 51.5074])
+    .rotate([0.1278, 0])
+    .parallels([50, 60])
+    .scale(1200 * 125)
+    .translate([width / 2, height / 2]);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var div = d3.select("body").append("div")   
+  .attr("class", "tooltip")               
+  .style("opacity", 0);
+	
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+	.append("g")
+		.call(d3.behavior.zoom().scaleExtent([1, 50]).on("zoom", zoom))
+	.append("g")
+
+ <!-- d3.json("https://primepotato.carto.com:443/api/v2/sql?q=select * from public.postcode_districts WHERE the_geom IS NOT NULL &format=geojson&dp=5",  -->
+	<!-- function(collection) { -->
+		<!-- svg.select("#layer_id") -->
+			<!-- .selectAll("path") -->
+			<!-- .data(collection.features) -->
+			<!-- .enter().append("path") -->
+			<!-- .attr("fill", "violet") -->
+			<!-- .attr("d", path);  -->
+	
+	<!-- area.style("opacity", 0.8)   -->
+	<!-- area.on("mouseover", function(d) { -->
+		<!-- d3.select(this).transition().duration(300).style("opacity", 1); -->
+		<!-- div.transition().duration(300) -->
+		<!-- .style("opacity", 1) -->
+		<!-- div.text(d.properties.name) -->
+		<!-- .style("left", (d3.event.pageX) + "px") -->
+		<!-- .style("top", (d3.event.pageY -30) + "px"); -->
+	<!-- }) -->
+	<!-- area.on("mouseout", function() { -->
+		<!-- d3.select(this) -->
+		<!-- .transition().duration(300) -->
+		<!-- .style("opacity", 0.8); -->
+		<!-- div.transition().duration(300) -->
+		<!-- .style("opacity", 0); -->
+	<!-- }) -->
+<!-- }); -->
+	
+	
+d3.json("london_pcds.json", function(error, uk) {
+	var area  = svg.selectAll("path")
+		.data(uk.features)
+		.enter()
+		.append("path")
+		.attr("class", function(d) { return "area " + d.properties.name; })
+		.attr("d", path).attr("fill", "#cccccc");
+		
+	area.style("opacity", 0.8)  
+	area.on("mouseover", function(d) {
+		d3.select(this).transition().duration(300).style("opacity", 1);
+		div.transition().duration(300)
+		.style("opacity", 1)
+		div.text(d.properties.name)
+		.style("left", (d3.event.pageX) + "px")
+		.style("top", (d3.event.pageY -30) + "px");
+	})
+	area.on("mouseout", function() {
+		d3.select(this)
+		.transition().duration(300)
+		.style("opacity", 0.8);
+		div.transition().duration(300)
+		.style("opacity", 0);
+	})
+});
+	
+	
+	
+<!-- d3.json("postcode-districts.json", function(error, uk) { -->
+	<!-- var area  = svg.selectAll("path") -->
+		<!-- .data(uk.features) -->
+		<!-- .enter() -->
+		<!-- .append("path") -->
+		<!-- .attr("class", function(d) { return "district " + d.properties.name; }) -->
+		<!-- .attr("d", path).attr("fill", "#cccccc"); -->
+	<!-- area.style("opacity", 0.8)   -->
+	<!-- area.on("mouseover", function(d) { -->
+		<!-- d3.select(this).transition().duration(300).style("opacity", 1); -->
+		<!-- div.transition().duration(300) -->
+		<!-- .style("opacity", 1) -->
+		<!-- div.text(d.properties.name) -->
+		<!-- .style("left", (d3.event.pageX) + "px") -->
+		<!-- .style("top", (d3.event.pageY -30) + "px"); -->
+	<!-- }) -->
+	<!-- area.on("mouseout", function() { -->
+		<!-- d3.select(this) -->
+		<!-- .transition().duration(300) -->
+		<!-- .style("opacity", 0.8); -->
+		<!-- div.transition().duration(300) -->
+		<!-- .style("opacity", 0); -->
+	<!-- }) -->
+<!-- }); -->
+
+
+function zoom() {
+  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+
+</script>

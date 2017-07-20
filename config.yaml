@@ -1,0 +1,167 @@
+gmail:
+  user: RobertJohnCooper@gmail.com
+  password: C0ntent123
+
+scraper:
+  imap_search_string: 'SUBJECT "WestEndAgents"'
+  search_fields:
+    price_psf:
+      reg_ex: blah
+      data_type: blah
+
+
+
+
+area_mappings:
+  east:
+    name: 'East London'
+    postcodes: ['E1', 'E18H', 'E2', 'EC1', 'EC1A', 'EC1M', 'EC1N', 'EC1R', 'EC1Y', 'EC2A', 'EC2M', 'EC3V']
+  west:
+    name: 'West London'
+    postcodes: ['TW9', 'W1', 'W11', 'W1B', 'W1C', 'W1D', 'W1F', 'W1H', 'W1J', 'W1K', 'W1S', 'W1T', 'W1U', 'W1W', 'W2', 'W8', 'WC1A', 'WC1B', 'WC1H', 'WC1N', 'WC1R', 'WC1V', 'WC1X', 'WC2', 'WC2B', 'WC2E', 'WC2H', 'WC2N', 'WC2R']
+  north:
+    name: 'North London'
+    postcodes: ['N1', 'N19', 'NW1', 'NW5', 'R7']
+  north_west:
+    name: 'North West London'
+    postcodes: ['NW1', 'NW5']
+  south:
+    name: 'South London'
+    postcodes: ['SE1', 'SW1','SW10', 'SW1A', 'SW1E', 'SW1P', 'SW1Y', 'SW9']
+  ec:
+    name: 'East Central London'
+    postcodes: ['EC1', 'EC1A', 'EC1M', 'EC1N', 'EC1R', 'EC1Y', 'EC2A', 'EC2M', 'EC3V']
+  wc:
+    name: 'West Central London'
+    postcodes: ['WC1A', 'WC1B', 'WC1H', 'WC1N', 'WC1R', 'WC1V', 'WC1X', 'WC2', 'WC2B', 'WC2E', 'WC2H', 'WC2N', 'WC2R']
+
+#  shoreditch:
+#    name: 'Shoreditch'
+#    postcodes:
+#  clerk_farr:
+#    name: 'Clerkenwell & Farringdon'
+#    postcodes:
+#  old_street:
+#    name: 'Old Street'
+#    postcodes:
+#  shoreditch:
+#    name: 'Shoreditch'
+#    postcodes:
+#  shoreditch:
+#    name: 'Shoreditch'
+#    postcodes:
+#  shoreditch:
+#    name: 'Shoreditch'
+#    postcodes:
+#  shoreditch:
+#    name: 'Shoreditch'
+#    postcodes:
+#  shoreditch:
+#    name: 'Shoreditch'
+#    postcodes:
+#
+
+areacode_mapping:
+  E1: 'Shoreditch'
+
+  E2: 'Shoreditch'
+
+  EC1A: 'Clerkenwell & Farringdon'
+  EC1M: 'Clerkenwell & Farringdon'
+  EC1N: 'Clerkenwell & Farringdon'
+  EC1R: 'Clerkenwell & Farringdon'
+  EC1Y: 'Old Street'
+
+  EC2A: 'Old Street'
+  EC2M: 'City of London'
+
+  EC3M: 'City of London'
+  EC3V: 'City of London'
+
+  N1: 'Islington'
+
+  N19: 'North London'
+
+  N1C: 'Euston/Kings Cross'
+
+  NW1: 'Camden'
+  NW5: 'Camden'
+
+  SE1: 'London Bridge'
+
+  SW10: 'Kensington & Chelsea'
+  SW1A: 'Westminster'
+  SW1E: 'Victoria'
+  SW1P: 'Westminster'
+  SW1W: 'Belgravia'
+  SW1Y: 'Piccadilly'
+
+  SW9: 'Southwark'
+
+  TW9: 'Richmond'
+
+  W11: 'Notting Hill'
+
+  W1B: 'Piccadilly'
+  W1C: 'Mayfair'
+  W1D: 'Soho'
+  W1F: 'Soho'
+  W1H: 'Marylebone'
+  W1J: 'Mayfair'
+  W1K: 'Mayfair'
+  W1S: 'Mayfair'
+  W1T: 'Noho/Fitzrovia'
+  W1U: 'Marylebone'
+  W1W: 'Noho/Fitzrovia'
+
+  W2: 'Paddington'
+
+  W8: 'Kensington & Chelsea'
+
+  WC1A: 'Holborn'
+  WC1B: 'Bloomsbury'
+  WC1H: 'Bloomsbury'
+  WC1N: 'Bloomsbury'
+  WC1R: 'Holborn'
+  WC1V: 'Holborn'
+  WC1X: 'Euston/Kings Cross'
+
+  WC2B: 'Holborn'
+  WC2E: 'Covent Garden'
+  WC2H: 'Covent Garden'
+  WC2N: 'Piccadilly'
+  WC2R: 'Piccadilly'
+
+
+
+
+areas: [
+  'Belgravia',
+  'Bloomsbury',
+  'Camden',
+  'Chiswick',
+  'Clerkenwell & Farringdon',
+  'Covent Garden',
+  'Euston/Kings Cross',
+  'Fleet Street',
+  'Hammersmith',
+  'Holborn',
+  'Kensington & Chelsea',
+  'Knightsbridge',
+  'London Bridge',
+  'Marylebone',
+  'Mayfair',
+  'Noho/Fitzrovia',
+  'Notting Hill',
+  'Old Street',
+  'Paddington',
+  'Piccadilly',
+  'Shoreditch',
+  'Soho',
+  'Southwark',
+  "St James's",
+  'Vauxhall',
+  'Victoria',
+  'Waterloo',
+  'Westminster'
+  ]

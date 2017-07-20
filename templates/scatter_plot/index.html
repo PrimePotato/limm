@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative;
+  width: 960px;
+}
+
+.axis text {
+	font: 10px sans-serif;
+	y: 0;
+	x: 10;
+	dy: 0.35em;
+	transform: rotate(90)
+	font-size: 15px
+	text-anchor: start
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .9;
+}
+
+.dot {
+  fill: red;
+  fill-opacity: .5;
+}
+
+.x.axis path {
+  display: none;
+}
+
+label {
+  position: absolute;
+  top: 10px;
+  right: -200px;
+}
+
+</style>
+<body>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script>
+
+var margin = {top: 100, right: 30, bottom: 200, left: 40},
+    width = 1200 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
+
+var x = d3.scaleBand()
+    .rangeRound([0, width], 0.1, 0.2);
+
+var y = d3.scaleLinear()
+    .range([height, 0]);
+
+var xAxis = d3.axisBottom()
+    .scale(x);
+
+var yAxis = d3.axisLeft()
+    .scale(y);	
+	
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+function getColor(d) {
+    return d > 90  	? '#800026' :
+           d > 80  	? '#BD0026' :
+           d > 70  	? '#E31A1C' :
+           d > 60  	? '#FC4E2A' :
+           d > 50   ? '#FD8D3C' :
+           d > 40   ? '#FEB24C' :
+           d > 30   ? '#FED976' :
+                      '#FFEDA0';
+	}
+
+// gridlines in x axis function
+function make_x_gridlines() {		
+    return d3.axisBottom(x)
+        .ticks(10)
+}	
+	
+d3.csv("dsp_data.csv", type, function(error, data) {
+  console.log(data)
+  x.domain(data.map(function(d) { return d.my_hood; }));
+  y.domain([0, d3.max(data, function(d) { return d.rent; })]);
+	
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+	 .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 10)
+		.attr("dy", "0.35em")
+		.attr("transform", "rotate(90)")
+		.style("font-size","15px")
+		.style("text-anchor", "start");
+
+  svg.append("g")
+       .attr("class", "y axis")
+       .call(yAxis)
+	 .selectAll("text")
+	   .style("font-size","15px");
+  
+  svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+		.style("font-size", "25px")  
+        .text("Disposals by area");
+
+
+  <!-- svg.selectAll(".dot") -->
+      <!-- .data(data) -->
+    <!-- .enter().append("rect") -->
+	  <!-- .attr("visibility", function(d){if(d.rent == 0) return "hidden"}) -->
+      <!-- .attr("x", function(d) { return x(d.my_hood) + x.rangeBand()/2;}) -->
+      <!-- .attr("y", function(d) { return y(d.rent) - Math.sqrt(d.size_max)/2; }) -->
+	  <!-- .attr("width", x.rangeBand()) -->
+	  <!-- .attr("fill",  "red") -->
+	  <!-- .attr("opacity", 0.3) -->
+	  <!-- .attr("height", function(d) { return Math.sqrt(d.size_max);  }); -->
+	  
+  svg.selectAll(".dot")
+      .data(data)
+    .enter().append("rect")
+	  .attr("visibility", function(d){if(d.rent == 0) return "hidden"})
+      .attr("x", function(d) { return x(d.my_hood)})
+      .attr("y", function(d) { return y(d.rent) - x.bandwidth()/2; })
+	  .attr("width", x.bandwidth())
+	  .attr("fill",  "red")
+	  .attr("opacity", function(d) {return Math.sqrt(d.size_max)/400;})
+	  .attr("height", x.bandwidth());
+  
+    // add the X gridlines
+  <!-- svg.append("g")			 -->
+      <!-- .attr("class", "grid") -->
+      <!-- .attr("transform", "translate(0," + height + ")") -->
+      <!-- .call(make_x_gridlines() -->
+          <!-- .tickSize(-height) -->
+          <!-- .tickFormat("") -->
+      <!-- ) -->
+  
+  <!-- svg.selectAll(".dot") -->
+      <!-- .data(data) -->
+    <!-- .enter().append("circle") -->
+      <!-- .attr("class", "dot") -->
+      <!-- .attr("r", 10) -->
+	  <!-- .attr("visibility", function(d){if(d.rent == 0) return "hidden"}) -->
+      <!-- .attr("cx", function(d) { return x(d.my_hood) + x.rangeBand()/2;}) -->
+      <!-- .attr("cy", function(d) { return y(d.rent); }); -->
+	  
+});
+
+function type(d) {
+  d.rent = +d.rent;
+  return d;
+}
+
+</script>

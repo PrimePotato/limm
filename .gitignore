@@ -1,0 +1,6 @@
+*.csv
+*.shp
+*.shx
+*.json
+*.geojson
+*.db
