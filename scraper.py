@@ -2,7 +2,6 @@ import re
 
 
 def extract_field(regex, msg):
-    # print(regex)
     a = re.search(regex[0], msg)
     if a:
         return a.group(regex[1])

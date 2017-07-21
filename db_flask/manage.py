@@ -45,7 +45,7 @@ class Disposal(db.Model):
         self.size_min = size_min
         self.rent = rent
         self.date_posted = date_posted
-        self.lease = lease[:120]
+        self.lease = str(lease)[:120]
         self.rates = rates
         self.service = service
         self.address = address[:120]

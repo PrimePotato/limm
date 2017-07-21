@@ -1,5 +1,6 @@
 import re
 import time
+import geocoder as gcd
 
 from geoalchemy2 import WKTElement
 
@@ -71,10 +72,19 @@ class GeoTools(object):
                 return None
 
     @staticmethod
-    def geocode_dic(loc):
+    def extract_areacode(s):
+        try:
+            rgx = re.search('[a-zA-Z]{1,2}\d{1,2}[a-zA-Z]?', s)
+            return rgx.group()
+        except AttributeError:
+            print('Extract area code issue {}'.format(s))
+            return None
+
+    @staticmethod
+    def geocode_dic(loc, session):
         pc = GeoTools.extract_postcode(loc)
         if pc:
-            pc_geo_data = GeoTools.postcode_geo_from_db(pc, loc)
+            pc_geo_data = GeoTools.postcode_geo_from_db(pc, loc, session)
             if pc_geo_data:
                 return pc_geo_data
             gl_pc = GeoTools.google_location(pc)
