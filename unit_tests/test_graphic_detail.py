@@ -33,5 +33,6 @@ def test_data_producer_all_acquisition_areas(data_producer):
 def test_hierarchical_data(data_producer):
     print(data_producer.hierarchical_data())
 
-# def test_data_producer_save_data_for_web(data_producer):
-#     data_producer.save_data_for_web()
+
+def test_data_producer_save_data_for_web(data_producer):
+    data_producer.save_data_for_web()

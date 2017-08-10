@@ -4,15 +4,16 @@ import email
 src = 'Inbox'
 src_apt = 'Accepted'
 src_rjt = 'Rejected'
-sch_str = 'SUBJECT "[WestEndAgents.com]"'
+# sch_str = 'SUBJECT "[WestEndAgents.com]"'
 
 
 class Extractor(object):
-    def __init__(self, username, password):
+    def __init__(self, username, password, sch_str):
         self.mail = imaplib.IMAP4_SSL('imap.gmail.com')
         self.mail.login(username, password)
         self.mail.select(src)
         self.uids_src = self.uids_from_search(sch_str)
+        self.sch_str = sch_str
 
     def uids_from_search(self, search_str):
         result, data = self.mail.uid('search', None, search_str)
@@ -29,7 +30,7 @@ class Extractor(object):
     def message_bodies(self):
         dic = {}
         self.mail.select(src)
-        uids = self.uids_from_search(sch_str)
+        uids = self.uids_from_search(self.sch_str)
         for u in uids:
             dic[u] = self.message_body(u)
         return dic

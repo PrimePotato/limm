@@ -80,9 +80,9 @@ class DataProducer(object):
 
     def save_data_for_web(self):
         reports = {
-            'web_data/count_by_hood.csv': self.count_by_hood(),
-            'web_data/disposal_average_rent_by_hood.csv': self.disposal_average_rent_by_hood(),
-            'web_data/disposal_average_rent_by_area_code.csv': self.disposal_average_rent_by_area_code()
+            script_file_path + '/web_data/count_by_hood.csv': self.count_by_hood(),
+            script_file_path + '/web_data/disposal_average_rent_by_hood.csv': self.disposal_average_rent_by_hood(),
+            script_file_path + '/web_data/disposal_average_rent_by_area_code.csv': self.disposal_average_rent_by_area_code()
         }
         for fn, df in reports.items():
             print('Saving {}'.format(fn))

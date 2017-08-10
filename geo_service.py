@@ -68,7 +68,7 @@ class GeoTools(object):
                     'the_geom': WKTElement('POINT(' + str(gg.lat) + ' ' + str(gg.lng) + ')', srid=4326),
                     'post_code': pc,
                     'area_code': ac}
-            if gg.status is 'OVER_QUERY_LIMIT':
+            if gg.status in ('OVER_QUERY_LIMIT', 'REQUEST_DENIED', 'INVALID_REQUEST', 'UNKNOWN_ERROR'):
                 return None
 
     @staticmethod

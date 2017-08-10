@@ -20,7 +20,7 @@ import os
 import locale
 locale.setlocale(locale.LC_ALL, 'uk')
 geo = Nominatim()
-esx = email_service.Extractor('robert.cooper@peppercorn.london', 'C0ntent123qwerty')
+# esx = email_service.Extractor('robert.cooper@peppercorn.london', 'C0ntent123qwerty')
 area_list = area_list()
 
 
