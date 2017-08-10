@@ -3,13 +3,20 @@ import pygeoj
 from db_flask.manage import Disposal, Acquisition, AcquisitionArea
 from datetime import date
 import pandas as pd
+import json
 import numpy as np
 import geojson
+import os
 
 from land_registry import extract_postcode_stubs, extract_markets
 
+script_file_path = os.path.dirname(os.path.abspath(__file__))
+
 
 class DataProducer(object):
+
+    data_columns = ['rent', 'rates', 'size_min', 'size_max']
+
     def __init__(self, session):
         self.session = session
         self.df_disposals = self.all_disposals()
@@ -19,6 +26,9 @@ class DataProducer(object):
     def all_disposals(self):
         qry = self.session.query(Disposal).all()
         d = pd.DataFrame([l.to_dict() for l in qry])
+        d = d[d['post_code'].notnull()]
+        d[['area_code', 'district_code', 'sector_code']] = d['post_code'].apply(extract_postcode_stubs).apply(pd.Series)
+        d['post_code'].apply(extract_markets)
         d.index.name = 'id'
         return d
 
@@ -78,6 +88,50 @@ class DataProducer(object):
             print('Saving {}'.format(fn))
             df.to_csv(fn, header=True)
 
+    @staticmethod
+    def dataframe_to_nested_dict(df):
+        if hasattr(df.index, 'levels'):
+            dic = {}
+            for idx in df.index.levels[0]:
+                sub_data = df.xs(idx)
+                if hasattr(sub_data.index, 'levels'):
+                    sub_data.index = pd.MultiIndex.from_tuples(sub_data.index.values)
+                dic[idx] = DataProducer.dataframe_to_nested_dict(sub_data)
+            return dic
+        else:
+            return df.to_dict('index')
+
+    @staticmethod
+    def sub_metrics(df):
+        return {'mean': df[DataProducer.data_columns].mean().to_dict(),
+                'sum': df[DataProducer.data_columns].sum().to_dict()}
+
+    @staticmethod
+    def dataframe_to_nodes_with_subtotals(df, name):
+        if hasattr(df.index, 'levels'):
+            dic = {'name': name,
+                   'children': []}
+            for idx in df.index.levels[0]:
+                sub_data = df.xs(idx)
+                if hasattr(sub_data.index, 'levels'):
+                    sub_data.index = pd.MultiIndex.from_tuples(sub_data.index.values)
+                dic['children'].append(DataProducer.dataframe_to_nodes_with_subtotals(sub_data, idx))
+            return dic
+        else:
+            dic = {'name': name,
+                   'children': []}
+            for idx, d in df.iterrows():
+                dic['children'].append({'size': d.size_max, 'name': idx})
+            return dic
+
+    def hierarchical_data(self):
+        gby = self.df_disposals.groupby(['area_code', 'district_code', 'sector_code'])
+        df = gby[['size_max']].sum()
+        df = df[df.size_max.notnull()]
+        dn = self.dataframe_to_nodes_with_subtotals(df, 'root')
+        with open(script_file_path + '/web_data/hierarchical_disposal_average.json', 'w') as fn:
+            json.dump(dn, fn)
+
     def average_cascade(self, column, area, district, sector, avg_area, avg_district, avg_sector):
         if sector in avg_sector.index:
             avg = avg_sector[column][sector]
@@ -136,7 +190,7 @@ class DataProducer(object):
                 output.add_feature(properties=ppt, geometry=pnt)
 
         output.add_unique_id()
-        output.save("point_heat.geojson")
+        output.save("web_data\point_heat.geojson")
 
     def disposal_scatter(self):
         dfd = self.df_disposals[['my_hood', 'rent', 'rates', 'size_min', 'size_max']]

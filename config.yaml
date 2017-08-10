@@ -132,7 +132,91 @@ areacode_mapping:
   WC2N: 'Piccadilly'
   WC2R: 'Piccadilly'
 
+district_code_mapping:
+  E1: 'Shoreditch'
 
+  E2: 'Shoreditch'
+
+  EC1A: 'Clerkenwell & Farringdon'
+  EC1M: 'Clerkenwell & Farringdon'
+  EC1N: 'Clerkenwell & Farringdon'
+  EC1R: 'Clerkenwell & Farringdon'
+  EC1Y: 'Old Street'
+
+  EC2A: 'Old Street'
+  EC2M: 'City of London'
+
+  EC3M: 'City of London'
+  EC3V: 'City of London'
+
+  N1: 'Islington'
+
+  N19: 'North London'
+
+  N1C: 'Euston/Kings Cross'
+
+  NW1: 'Camden'
+  NW5: 'Camden'
+
+  SE1: 'London Bridge'
+
+  SW10: 'Kensington & Chelsea'
+  SW1A: 'Westminster'
+  SW1E: 'Victoria'
+  SW1P: 'Westminster'
+  SW1W: 'Belgravia'
+  SW1Y: 'Piccadilly'
+
+  SW9: 'Southwark'
+
+  TW9: 'Richmond'
+
+  W11: 'Notting Hill'
+
+  W1B: 'Piccadilly'
+  W1C: 'Mayfair'
+  W1D: 'Soho'
+  W1F: 'Soho'
+  W1H: 'Marylebone'
+  W1J: 'Mayfair'
+  W1K: 'Mayfair'
+  W1S: 'Mayfair'
+  W1T: 'Noho/Fitzrovia'
+  W1U: 'Marylebone'
+  W1W: 'Noho/Fitzrovia'
+
+  W2: 'Paddington'
+
+  W8: 'Kensington & Chelsea'
+
+  WC1A: 'Holborn'
+  WC1B: 'Bloomsbury'
+  WC1H: 'Bloomsbury'
+  WC1N: 'Bloomsbury'
+  WC1R: 'Holborn'
+  WC1V: 'Holborn'
+  WC1X: 'Euston/Kings Cross'
+
+  WC2B: 'Holborn'
+  WC2E: 'Covent Garden'
+  WC2H: 'Covent Garden'
+  WC2N: 'Piccadilly'
+  WC2R: 'Piccadilly'
+
+
+sector_code_mapping:
+  WC2R 1: 'Piccadilly'
+
+area_code_mapping:
+  E:     East
+  EC:    East Central
+  N:     North
+  NW:    Noth West
+  SE:    South East
+  SW:    South West
+  TW:    Richmond
+  W:     West
+  WC:    West Central
 
 
 areas: [

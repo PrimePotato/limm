@@ -19,12 +19,25 @@ form {
   top: 10px;
 }
 
+.legend rect {
+  fill:white;
+  stroke:black;
+  opacity:0.8;}
+  
+polyline {
+	opacity: .3;
+	stroke: black;
+	stroke-width: 2px;
+	fill: none;
+}
+
 </style>
 <form>
-  <label><input type="radio" name="dataset" value="apples" checked> Apples</label>
-  <label><input type="radio" name="dataset" value="oranges"> Oranges</label>
+  <label><input type="radio" name="dataset" value="disposals" checked> disposals</label>
+  <label><input type="radio" name="dataset" value="acquisitions"> acquisitions</label>
 </form>
 <script src="//d3js.org/d3.v3.min.js"></script>
+<script src="d3.legend.js"></script>
 <script>
 
 var width = 960,
@@ -34,34 +47,154 @@ var width = 960,
 var color = d3.scale.category20();
 
 var pie = d3.layout.pie()
-    .value(function(d) { return d.apples; })
+    .value(function(d) { return d.disposals; })
     .sort(null);
 
 var arc = d3.svg.arc()
-    .innerRadius(radius - 100)
+    .innerRadius(radius - 125)
     .outerRadius(radius - 20);
+	
+var outerArc = d3.svg.arc()
+	.innerRadius(radius * 0.9)
+	.outerRadius(radius * 0.9);
+	
+var key = function(d){ return d.name; };
 
-var svg = d3.select("body").append("svg")
+var key_data = function(d){ return d.data.name; };
+	
+var legendRectSize = radius * 0.05;
+var legendSpacing = radius * 0.02;
+
+var svg = d3.select("body")
+  .append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-d3.tsv("data.tsv", type, function(error, data) {
-  if (error) throw error;
+svg.append("g")
+	.attr("class", "labels");
+svg.append("g")
+	.attr("class", "labelName");
+svg.append("g")
+	.attr("class", "labelValue");
+svg.append("g")
+	.attr("class", "lines");
 
-  var path = svg.datum(data).selectAll("path")
-      .data(pie)
-    .enter().append("path")
-      .attr("fill", function(d, i) { return color(i); })
-      .attr("d", arc)
-      .each(function(d) { this._current = d; }); // store the initial angles
 
+d3.csv("count_by_hood.csv", type, function(error, data) {
+    if (error) throw error;
+
+	var path = svg.datum(data).selectAll("path")
+		  .data(pie)
+		.enter().append("path")
+		  .attr("fill", function(d, i) { return color(i); })
+		  .attr("d", arc)
+		  .attr("data-legend",key)
+		  .attr("data-legend-pos", function(d, i) { return i; })
+		  .each(function(d) { this._current = d; }); // store the initial angles
+	
+
+    var legend = svg.selectAll('.legend')
+        .data(color.domain())
+        .enter()
+        .append('g')
+        .attr('class', 'legend')
+        .attr('transform', function(d, i) {
+            var height = legendRectSize + legendSpacing;
+            var offset =  height * color.domain().length / 2;
+            var horz = -3 * legendRectSize + 300;
+            var vert = i * height - offset + 100;
+            return 'translate(' + horz + ',' + vert + ')';
+        });
+
+    legend.append('rect')
+        .attr('width', legendRectSize)
+        .attr('height', legendRectSize)
+        .style('fill', color)
+        .style('stroke', color);
+
+    legend.append('text')
+		.data(data)
+        .attr('x', legendRectSize + legendSpacing)
+        .attr('y', legendRectSize - legendSpacing)
+		.text(function(d) { return d.name;})
+	
+	/* ------- TEXT LABELS -------*/
+
+	var text = svg.select(".labelName").selectAll("text")
+		.data(pie(data), function(d){ return d.data.name });
+
+	text.enter()
+		.append("text")
+		.attr("dy", ".35em")
+		.data(data)
+		.text(key);
+	
+	function midAngle(d){
+		return d.startAngle + (d.endAngle - d.startAngle)/2;
+	}
+
+
+    text.transition().duration(1000)
+        .attrTween("transform", function(d) {
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return function(t) {
+                var d2 = interpolate(t);
+                var pos = outerArc.centroid(d2);
+                pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                return "translate("+ pos +")";
+            };
+        })
+        .styleTween("text-anchor", function(d){
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return function(t) {
+                var d2 = interpolate(t);
+                return midAngle(d2) < Math.PI ? "start":"end";
+            };
+        })
+        .text(function(d) {
+            return (d.name+": "+d.disposals+"%");
+        });
+
+	text.exit()
+		.remove();
+
+	/* ------- SLICE TO TEXT POLYLINES -------*/
+
+	var polyline = svg.select(".lines").selectAll("polyline")
+		.data(pie(data), key);
+	
+	polyline.enter()
+		.append("polyline");
+
+	polyline.transition().duration(1000)
+		.attrTween("points", function(d){
+			this._current = this._current || d;
+			var interpolate = d3.interpolate(this._current, d);
+			this._current = interpolate(0);
+			return function(t) {
+				var d2 = interpolate(t);
+				var pos = outerArc.centroid(d2);
+				pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+				return [arc.centroid(d2), outerArc.centroid(d2), pos];
+			};			
+		});
+	
+	polyline.exit()
+		.remove();
+
+    	
+	
   d3.selectAll("input")
       .on("change", change);
 
   var timeout = setTimeout(function() {
-    d3.select("input[value=\"oranges\"]").property("checked", true).each(change);
+    d3.select("input[value=\"acquisitions\"]").property("checked", true).each(change);
   }, 2000);
 
   function change() {
@@ -71,11 +204,12 @@ d3.tsv("data.tsv", type, function(error, data) {
     path = path.data(pie); // compute the new angles
     path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
   }
+  
 });
 
 function type(d) {
-  d.apples = +d.apples;
-  d.oranges = +d.oranges;
+  d.disposals = +d.disposals;
+  d.acquisitions = +d.acquisitions;
   return d;
 }
 
