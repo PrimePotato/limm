@@ -36,3 +36,7 @@ def test_hierarchical_data(data_producer):
 
 def test_data_producer_save_data_for_web(data_producer):
     data_producer.save_data_for_web()
+
+
+def test_data_producer_save_geojson(data_producer):
+    data_producer.update_geojson_choropleth()

@@ -146,7 +146,7 @@ class DataProducer(object):
         return round(avg, 2)
 
     def update_geojson_choropleth(self):
-        geo_data = pygeoj.load("central_london.geojson")
+        geo_data = pygeoj.load(script_file_path + "/central_london.geojson")
         avg_area = self.df_disposals.groupby('area_code').mean()
         avg_district = self.df_disposals.groupby('district_code').mean()
         avg_sector = self.df_disposals.groupby('sector_code').mean()
