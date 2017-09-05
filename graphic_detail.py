@@ -14,7 +14,6 @@ script_file_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class DataProducer(object):
-
     data_columns = ['rent', 'rates', 'size_min', 'size_max']
 
     def __init__(self, session):
@@ -30,7 +29,17 @@ class DataProducer(object):
         d[['area_code', 'district_code', 'sector_code']] = d['post_code'].apply(extract_postcode_stubs).apply(pd.Series)
         d['post_code'].apply(extract_markets)
         d.index.name = 'id'
+        d = self.clean_data_frame_by_std(d, 'rent', 5)
         return d
+
+    @staticmethod
+    def clean_data_frame_by_std(df, col, mul_std):
+        series = df[col]
+        return df[abs(series - series.mean()) < mul_std * series.std()]
+
+    @staticmethod
+    def clean_data_series_by_std(series, mul_std):
+        return series[abs(series - series.mean()) < mul_std * series.std()]
 
     def all_acquisitions(self):
         qry = self.session.query(Acquisition).all()
@@ -196,5 +205,6 @@ class DataProducer(object):
         dfd = self.df_disposals[['my_hood', 'rent', 'rates', 'size_min', 'size_max']]
         dfd.to_csv('dsp_data.csv')
 
-# update_geojson_heatmap()
-# update_geojson_choropleth()
+
+
+
